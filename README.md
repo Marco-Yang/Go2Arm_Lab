@@ -1,135 +1,76 @@
-# Template for Isaac Lab Projects
+# Go2Arm_Lab
 
-## Overview
+**A Reinforcement-Learning(RL) Training Framework for Legged Manipulation Robots**
+  
+<img src="https://img.shields.io/badge/IsaacSim-v4.5.0-blue" alt="IsaacSim-v4.5.0" /> <img src="https://img.shields.io/badge/IsaacLab-v2.1.0-blue" alt="IsaacLab v2.1.0" /> <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python 3.10" /> <img src="https://img.shields.io/badge/Platform-Linux--64-orange" alt="Linux-64" /> <img src="https://img.shields.io/badge/License-Apache2.0-yellow" alt="Apache2.0T License" />
 
-This project/repository serves as a template for building projects or extensions based on Isaac Lab.
-It allows you to develop in an isolated environment, outside of the core Isaac Lab repository.
+[中文文档](https://github.com/zzzJie-Robot/Go2Arm_Lab/blob/main/README_CN.md "中文文档")
 
-**Key Features:**
+## 🚀 Overview
 
-- `Isolation` Work outside the core Isaac Lab repository, ensuring that your development efforts remain self-contained.
-- `Flexibility` This template is set up to allow your code to be run as an extension in Omniverse.
+Go2Arm_Lab enables RL training for the **Go2Arm** robot:
 
-**Keywords:** extension, template, isaaclab
+- **Base platform**: Unitree Go2 quadruped
+- **Manipulator**: Interbotix WidowX 250s robotic arm
 
-## Installation
+> **Version compatibility**  
+> This repository currently depends on **IsaacLab v2.2.0**.  
+> For IsaacLab v2.1.0, please use the [v2.1.0](https://github.com/zzzJie-Robot/Go2Arm_Lab/releases/tag/v2.1) version of this repository.
+> For IsaacLab v1.4.1, please use the [v1.4.1](https://github.com/zzzJie-Robot/Go2Arm_Lab/releases/tag/v1.4) version of this repository.
 
-- Install Isaac Lab by following the [installation guide](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/index.html).
-  We recommend using the conda installation as it simplifies calling Python scripts from the terminal.
+> **Gazebo deployment**  
+> If you want to deploy your policy in Gazebo, please use:
+> [Go2Arm_sim2sim](https://github.com/zzzJie-Robot/Go2Arm_sim2sim)
 
-- Clone or copy this project/repository separately from the Isaac Lab installation (i.e. outside the `IsaacLab` directory):
+| IsaacLab Simulation (v2.2) | Gazebo Simulation |
+|--------------------|-------------------|
+| ![IsaacLab](https://github.com/zzzJie-Robot/Go2Arm_Lab/blob/v2.1/video/IsaacLab%20v2.1.gif)  | ![Gazebo](https://github.com/zzzJie-Robot/Go2Arm_Lab/blob/main/video/Gazebo.gif)  |
 
-- Using a python interpreter that has Isaac Lab installed, install the library in editable mode using:
+For **more videos**, please visit my [Bilibili homepage](https://space.bilibili.com/400627082?spm_id_from=333.1007.0.0).
 
-    ```bash
-    # use 'PATH_TO_isaaclab.sh|bat -p' instead of 'python' if Isaac Lab is not installed in Python venv or conda
-    python -m pip install -e source/Go2Arm_Lab
+## 📦 Installation
 
-- Verify that the extension is correctly installed by:
+1. Follow the [official guide](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/index.html) to install IsaacLab v2.1.0.  
+2. Clone this repository into the same directory as IsaacLab:
+   ```
+   git clone https://github.com/zzzJie-Robot/Go2Arm_Lab.git
+   ```
+3. Install the package using the Python interpreter that IsaacLab uses:
+   ```
+   python -m pip install -e source/Go2Arm_Lab
+   ```
 
-    - Listing the available tasks:
+### ⚙️ Training & Inference
 
-        Note: It the task name changes, it may be necessary to update the search pattern `"Template-"`
-        (in the `scripts/list_envs.py` file) so that it can be listed.
+#### Training
 
-        ```bash
-        # use 'FULL_PATH_TO_isaaclab.sh|bat -p' instead of 'python' if Isaac Lab is not installed in Python venv or conda
-        python scripts/list_envs.py
-        ```
+Run reinforcement-learning training in headless mode for higher efficiency:
 
-    - Running a task:
+```
+# Activate IsaacLab environment
+conda activate your_isaaclab_env
 
-        ```bash
-        # use 'FULL_PATH_TO_isaaclab.sh|bat -p' instead of 'python' if Isaac Lab is not installed in Python venv or conda
-        python scripts/<RL_LIBRARY>/train.py --task=<TASK_NAME>
-        ```
+# Go to Go2Arm_Lab
+cd /path/to/Go2Arm_Lab
 
-    - Running a task with dummy agents:
-
-        These include dummy agents that output zero or random agents. They are useful to ensure that the environments are configured correctly.
-
-        - Zero-action agent
-
-            ```bash
-            # use 'FULL_PATH_TO_isaaclab.sh|bat -p' instead of 'python' if Isaac Lab is not installed in Python venv or conda
-            python scripts/zero_agent.py --task=<TASK_NAME>
-            ```
-        - Random-action agent
-
-            ```bash
-            # use 'FULL_PATH_TO_isaaclab.sh|bat -p' instead of 'python' if Isaac Lab is not installed in Python venv or conda
-            python scripts/random_agent.py --task=<TASK_NAME>
-            ```
-
-### Set up IDE (Optional)
-
-To setup the IDE, please follow these instructions:
-
-- Run VSCode Tasks, by pressing `Ctrl+Shift+P`, selecting `Tasks: Run Task` and running the `setup_python_env` in the drop down menu.
-  When running this task, you will be prompted to add the absolute path to your Isaac Sim installation.
-
-If everything executes correctly, it should create a file .python.env in the `.vscode` directory.
-The file contains the python paths to all the extensions provided by Isaac Sim and Omniverse.
-This helps in indexing all the python modules for intelligent suggestions while writing code.
-
-### Setup as Omniverse Extension (Optional)
-
-We provide an example UI extension that will load upon enabling your extension defined in `source/Go2Arm_Lab/Go2Arm_Lab/ui_extension_example.py`.
-
-To enable your extension, follow these steps:
-
-1. **Add the search path of this project/repository** to the extension manager:
-    - Navigate to the extension manager using `Window` -> `Extensions`.
-    - Click on the **Hamburger Icon**, then go to `Settings`.
-    - In the `Extension Search Paths`, enter the absolute path to the `source` directory of this project/repository.
-    - If not already present, in the `Extension Search Paths`, enter the path that leads to Isaac Lab's extension directory directory (`IsaacLab/source`)
-    - Click on the **Hamburger Icon**, then click `Refresh`.
-
-2. **Search and enable your extension**:
-    - Find your extension under the `Third Party` category.
-    - Toggle it to enable your extension.
-
-## Code formatting
-
-We have a pre-commit template to automatically format your code.
-To install pre-commit:
-
-```bash
-pip install pre-commit
+# Launch training (headless)
+python scripts/rsl_rl/train.py --task Isaac-Go2Arm-Flat --headless
 ```
 
-Then you can run pre-commit with:
+#### Inference
 
-```bash
-pre-commit run --all-files
+Deploy a trained policy in a single environment:
+
+```
+# Activate IsaacLab environment
+conda activate your_isaaclab_env
+
+# Go to IsaacLab root
+cd /path/to/Go2Arm_Lab
+
+# Run inference
+python scripts/rsl_rl/play.py --task Isaac-Go2Arm-Flat-Play --num_envs 1
 ```
 
-## Troubleshooting
-
-### Pylance Missing Indexing of Extensions
-
-In some VsCode versions, the indexing of part of the extensions is missing.
-In this case, add the path to your extension in `.vscode/settings.json` under the key `"python.analysis.extraPaths"`.
-
-```json
-{
-    "python.analysis.extraPaths": [
-        "<path-to-ext-repo>/source/Go2Arm_Lab"
-    ]
-}
-```
-
-### Pylance Crash
-
-If you encounter a crash in `pylance`, it is probable that too many files are indexed and you run out of memory.
-A possible solution is to exclude some of omniverse packages that are not used in your project.
-To do so, modify `.vscode/settings.json` and comment out packages under the key `"python.analysis.extraPaths"`
-Some examples of packages that can likely be excluded are:
-
-```json
-"<path-to-isaac-sim>/extscache/omni.anim.*"         // Animation packages
-"<path-to-isaac-sim>/extscache/omni.kit.*"          // Kit UI tools
-"<path-to-isaac-sim>/extscache/omni.graph.*"        // Graph UI tools
-"<path-to-isaac-sim>/extscache/omni.services.*"     // Services tools
-...
-```
+## 🙏 Acknowledgments  
+The RL algorithm implementation in this project references the [Deep-Whole-Body-Control](https://github.com/MarkFzp/Deep-Whole-Body-Control) project, for which we extend our sincere gratitude.
