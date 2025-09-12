@@ -150,7 +150,7 @@ class UniformPoseCommand(CommandTerm):
                                               (r.uniform_(*self.cfg.ranges_final.pos_z)) * torch.clamp((count), 0, 1)
             self.pose_command_b[env_ids, 2] = self.pose_command_w_z[env_ids, 0]  - self.robot.data.root_pos_w[env_ids, 2] 
                                               
-            for i in range(len(env_ids)):
+            for _, i in enumerate(env_ids):
                 length_arm = torch.norm(torch.stack([self.pose_command_b[i, 0], 
                                                      self.pose_command_b[i, 1], 
                                                      self.pose_command_b[i, 2] 
