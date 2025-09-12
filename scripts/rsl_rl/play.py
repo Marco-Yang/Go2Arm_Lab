@@ -57,7 +57,7 @@ import os
 import time
 import torch
 
-from rsl_rl.runners import OnPolicyRunner
+from local_rsl_rl.runners import OnPolicyRunner
 
 from isaaclab.envs import (
     DirectMARLEnv,
@@ -70,7 +70,7 @@ from isaaclab.utils.assets import retrieve_file_path
 from isaaclab.utils.dict import print_dict
 from isaaclab.utils.pretrained_checkpoint import get_published_pretrained_checkpoint
 
-# from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper, export_policy_as_jit, export_policy_as_onnx     # onnx not avaliable
+from isaaclab_rl.rsl_rl import export_policy_as_jit  # onnx not avaliable
 
 #TODO:
 from local_rsl_rl.wrappers import RslRlVecEnvWrapper
@@ -178,7 +178,7 @@ def change_obs_order(obs, obs_new, total, env):
 
 
 @hydra_task_config(args_cli.task, args_cli.agent)
-def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
+def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agent_cfg: Go2ArmRslRlOnPolicyRunnerCfg):
     """Play with RSL-RL agent."""
     # grab task name for checkpoint path
     task_name = args_cli.task.split(":")[-1]
