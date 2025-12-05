@@ -47,8 +47,8 @@ def joint_pos_rel(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg = SceneEntityC
                         "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
                         "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
                         "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                        "waist", "shoulder", "elbow", 
-                        "forearm_roll", "wrist_angle", "wrist_rotate"
+                        "arm_joint1", "arm_joint2", "arm_joint3", 
+                        "arm_joint4", "arm_joint5", "arm_joint6"
                         ],preserve_order=True)
 
     return asset.data.joint_pos[:, joint_ids] - asset.data.default_joint_pos[:, joint_ids]
@@ -65,8 +65,8 @@ def joint_vel_rel(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg = SceneEntityC
                         "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
                         "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
                         "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                        "waist", "shoulder", "elbow", 
-                        "forearm_roll", "wrist_angle", "wrist_rotate"
+                        "arm_joint1", "arm_joint2", "arm_joint3", 
+                        "arm_joint4", "arm_joint5", "arm_joint6"
                         ],preserve_order=True)
 
     return asset.data.joint_vel[:, joint_ids] - asset.data.default_joint_vel[:, joint_ids]
@@ -145,8 +145,8 @@ def get_joints_torques(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = Scene
                                 "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
                                 "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
                                 "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                                "waist"       , "shoulder"      , "elbow"        , 
-                                "forearm_roll", "wrist_angle"   , "wrist_rotate"
+                                "arm_joint1"  , "arm_joint2"    , "arm_joint3"   , 
+                                "arm_joint4"  , "arm_joint5"    , "arm_joint6"
                                 ],preserve_order=True)
     return asset.data.applied_torque[:, joint]
 

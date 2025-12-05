@@ -445,8 +445,8 @@ def joint_vel_l2_Go2(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEn
     # extract the used quantities (to enable type-hinting)
     asset: Articulation = env.scene[asset_cfg.name]
     arm_joint, _ = asset.find_joints([ 
-                        "waist", "shoulder", "elbow", 
-                        "forearm_roll", "wrist_angle", "wrist_rotate"
+                        "arm_joint1", "arm_joint2", "arm_joint3", 
+                        "arm_joint4", "arm_joint5", "arm_joint6"
                         ])
     return torch.sum(torch.square(asset.data.joint_vel[:, arm_joint]), dim=1)
 
@@ -519,8 +519,8 @@ def joint_arm_energy_abs_sum(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg =
     asset: Articulation = env.scene[asset_cfg.name]
 
     arm_joint, _ = asset.find_joints([ 
-                        "waist", "shoulder", "elbow", 
-                        "forearm_roll", "wrist_angle", "wrist_rotate"
+                        "arm_joint1", "arm_joint2", "arm_joint3", 
+                        "arm_joint4", "arm_joint5", "arm_joint6"
                         ])
     return torch.sum(torch.abs(asset.data.applied_torque[:,arm_joint] * asset.data.joint_vel[:, arm_joint]), dim=1)
 

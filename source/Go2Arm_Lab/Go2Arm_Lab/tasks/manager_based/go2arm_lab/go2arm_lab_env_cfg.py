@@ -78,14 +78,14 @@ class MySceneCfg(InteractiveSceneCfg):
     robot: ArticulationCfg = MISSING
     # sensors
     height_scanner = RayCasterCfg(
-        prim_path="{ENV_REGEX_NS}/Robot/base",
+        prim_path="{ENV_REGEX_NS}/Robot/go2_description/base_link",
         offset=RayCasterCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
         attach_yaw_only=True,
         pattern_cfg=patterns.GridPatternCfg(resolution=0.1, size=[1.6, 1.0]),
         debug_vis=False,
         mesh_prim_paths=["/World/ground"],
     )
-    contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/.*", history_length=3, track_air_time=True)
+    contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/go2_description/.*", history_length=3, track_air_time=True)
     # lights
     sky_light = AssetBaseCfg(
         prim_path="/World/skyLight",
@@ -117,7 +117,7 @@ class EventCfg:
         func=mdp.randomize_rigid_body_mass,
         mode="startup",
         params={
-            "asset_cfg": SceneEntityCfg("robot", body_names="base"),
+            "asset_cfg": SceneEntityCfg("robot", body_names="base_link"),
             "mass_distribution_params": (-3.0, 3.0),
             "operation": "add",
         },
@@ -127,7 +127,7 @@ class EventCfg:
     #     func=mdp.randomize_rigid_body_com,
     #     mode="startup",
     #     params={
-    #         "asset_cfg": SceneEntityCfg("robot", body_names="base"),
+    #         "asset_cfg": SceneEntityCfg("robot", body_names="base_link"),
     #         "com_range": {"x": (-0.05, 0.05), "y": (-0.05, 0.05), "z": (-0.01, 0.01)},
     #     },
     # )
@@ -136,7 +136,7 @@ class EventCfg:
         func=mdp.randomize_rigid_body_mass,
         mode="startup",
         params={
-            "asset_cfg": SceneEntityCfg("robot", body_names="gripper_link"),
+            "asset_cfg": SceneEntityCfg("robot", body_names="arm_link6"),  # Updated for D1 arm
             "mass_distribution_params": (-0.1, 0.5),
             "operation": "add",
         },
@@ -147,7 +147,7 @@ class EventCfg:
         func=mdp.apply_external_force_torque,
         mode="reset",
         params={
-            "asset_cfg": SceneEntityCfg("robot", body_names="base"),
+            "asset_cfg": SceneEntityCfg("robot", body_names="base_link"),
             "force_range": (0.0, 0.0),
             "torque_range": (-0.0, 0.0),
         },
@@ -204,11 +204,11 @@ class EventCfg:
 @configclass
 class CommandsCfg:
     """Command specifications for the MDP."""
-    ## Go2ARM
+    ## Go2ARM - Now using D1 arm
     
     ee_pose = mdp.command_cfg.UniformPoseCommandCfg(
         asset_name="robot",
-        body_name="gripper_link",
+        body_name="arm_link6",  # Updated for D1 arm end-effector
         resampling_time_range=(6.0,8.0),
         debug_vis=True,
         is_Go2ARM=True,
@@ -276,14 +276,14 @@ class ActionsCfg:
     )   
     arm_pose = mdp.JointPositionActionCfg(asset_name="robot",
                                           joint_names=[
-                                              "waist", "shoulder", "elbow", 
-                                              "forearm_roll", "wrist_angle", "wrist_rotate"],
-                                           scale = {"waist":        0.5, # 0.8
-                                                    "shoulder":     0.5, # 0.35
-                                                    "elbow":        0.5, # 0.35
-                                                    "forearm_roll": 0.5, # 0.35
-                                                    "wrist_angle":  0.5, # 0.35
-                                                    "wrist_rotate": 0.5}, # 0.35
+                                              "arm_joint1", "arm_joint2", "arm_joint3", 
+                                              "arm_joint4", "arm_joint5", "arm_joint6"],
+                                           scale = {"arm_joint1":  0.5, # 0.8
+                                                    "arm_joint2":  0.5, # 0.35
+                                                    "arm_joint3":  0.5, # 0.35
+                                                    "arm_joint4":  0.5, # 0.35
+                                                    "arm_joint5":  0.5, # 0.35
+                                                    "arm_joint6":  0.5}, # 0.35
                                             use_default_offset=True,
                                             preserve_order=True,
     )
@@ -339,7 +339,7 @@ class RewardsCfg:
     end_effector_position_tracking = RewTerm(
         func=mdp.position_command_error_exp,
         weight=2.5,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names="gripper_link"),
+        params={"asset_cfg": SceneEntityCfg("robot", body_names="arm_link6"),  # Updated for D1 arm
                 "command_name": "ee_pose",
                 "std": 0.2},
     )
@@ -347,7 +347,7 @@ class RewardsCfg:
     end_effector_orientation_tracking = RewTerm(
         func=mdp.orientation_command_error,
         weight=-1.5,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names="gripper_link"), 
+        params={"asset_cfg": SceneEntityCfg("robot", body_names="arm_link6"),  # Updated for D1 arm
                 "command_name": "ee_pose"},
     )
 
@@ -492,7 +492,7 @@ class TerminationsCfg:
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
     base_contact = DoneTerm(
         func=mdp.illegal_contact,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names="base"), "threshold": 0.5},
+        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names="base_link"), "threshold": 0.5},
     )
     thigh_contact = DoneTerm(
         func=mdp.illegal_contact,
