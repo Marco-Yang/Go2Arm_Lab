@@ -81,8 +81,8 @@ class Go2ARMFlatEnvCfg_PLAY(Go2ARMFlatEnvCfg):
         # post init of parent
         super().__post_init__()
 
-        # make a smaller scene for play
-        self.scene.num_envs = 50
+        # make a smaller scene for play - reduce to 1 environment for better visualization
+        self.scene.num_envs = 1  # Changed from 50 to 1 for better performance
         self.scene.env_spacing = 2.5
         # disable randomization for play
         self.observations.policy.enable_corruption = False
