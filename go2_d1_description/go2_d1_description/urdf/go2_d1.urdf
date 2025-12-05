@@ -1105,6 +1105,56 @@ Stephen Brawner (brawner@gmail.com)
       xyz="0 0 0" />
   </joint>
   <link
+    name="RR_foot">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.04" />
+      <inertia
+        ixx="9.6e-06"
+        ixy="0"
+        ixz="0"
+        iyy="9.6e-06"
+        iyz="0"
+        izz="9.6e-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/adam/ChongQing/Go2Arm_Lab/go2_d1_description/go2_d1_description/urdf/go2/dae/foot.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.002 0 0" />
+      <geometry>
+        <sphere radius="0.022" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RR_foot_joint"
+    type="fixed" dont_collapse="true">
+    <origin
+      xyz="0 0 -0.213"
+      rpy="0 0 0" />
+    <parent
+      link="RR_calf" />
+    <child
+      link="RR_foot" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
     name="imu">
     <inertial>
       <origin
