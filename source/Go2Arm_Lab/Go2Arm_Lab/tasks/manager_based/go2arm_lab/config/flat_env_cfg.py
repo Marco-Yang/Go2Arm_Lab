@@ -63,10 +63,10 @@ class Go2ARMFlatEnvCfg(LocomotionVelocityEnvCfg):
         self.rewards.action_rate_l2.weight = -0.01
         
         self.rewards.feet_air_time.weight = 0.0 #0.5
-        self.rewards.F_feet_air_time.weight = 1.0 #0.5
-        self.rewards.R_feet_air_time.weight = 1.0 #0.5
+        self.rewards.F_feet_air_time.weight = 1.5  # Increased from 1.0 to encourage lifting feet
+        self.rewards.R_feet_air_time.weight = 1.5  # Increased from 1.0 to encourage lifting feet
 
-        self.rewards.feet_height.weight = -0.0 #TODO
+        self.rewards.feet_height.weight = 1.0  # Changed from 0.0 to 1.0 - encourage lifting feet higher during swing
         self.rewards.feet_height_body.weight = -3.0 #TODO
         self.rewards.foot_contact.weight = 0.003 #0.003
         self.rewards.hip_deviation.weight = -0.2

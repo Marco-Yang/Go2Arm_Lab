@@ -365,14 +365,14 @@ class RewardsCfg:
         weight=1.5, 
         params={
                 "command_name": "base_velocity", 
-                "std":0.2}
+                "std":0.05}  # Reduced from 0.2 to 0.05 for tighter tracking requirement
     )
     track_ang_vel_z_exp = RewTerm(
         func=mdp.track_ang_vel_z_exp, 
         weight=1.5,
          params={ 
                  "command_name": "base_velocity", 
-                 "std": math.sqrt(0.2)}
+                 "std": math.sqrt(0.05)}  # Reduced from sqrt(0.2) to sqrt(0.05) for consistency
     )
 
     lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-2.5)
@@ -496,16 +496,17 @@ class TerminationsCfg:
     )
     thigh_contact = DoneTerm(
         func=mdp.illegal_contact,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_thigh"), "threshold":0.5},
+        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_thigh"), "threshold": 5.0},  # Increased from 0.5 to 5.0
     )
     arm_contact = DoneTerm(
         func=mdp.illegal_contact,
         params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_link"), "threshold": 0.5},
     )
-    calf_contact = DoneTerm(
-        func=mdp.illegal_contact,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_calf"), "threshold": 0.5},
-    )
+    # DISABLED for flat terrain training - allow natural gait development without calf contact penalties
+    # calf_contact = DoneTerm(
+    #     func=mdp.illegal_contact,
+    #     params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_calf"), "threshold": 10.0},
+    # )
 
 
 
