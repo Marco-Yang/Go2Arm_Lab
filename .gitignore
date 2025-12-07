@@ -1,2 +1,6 @@
 logs/
 *.log
+outputs/
+**__pycache__
+*.pyc
+videos/

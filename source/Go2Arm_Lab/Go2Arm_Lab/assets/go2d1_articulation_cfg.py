@@ -1,6 +1,7 @@
 import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
-GO2D1_USD = os.path.join(current_dir, "go2_d1.usd")
+# GO2D1_USD = os.path.join(current_dir, "go2_d1.usd")
+GO2D1_USD = "/home/adam/ChongQing/Go2Arm_Lab/source/Go2Arm_Lab/Go2Arm_Lab/assets/go2_d1_description/urdf/go2_d1/go2_d1_v1.usd"
 
 import isaaclab.sim as sim_utils
 from isaaclab.actuators import DCMotorCfg, ImplicitActuatorCfg

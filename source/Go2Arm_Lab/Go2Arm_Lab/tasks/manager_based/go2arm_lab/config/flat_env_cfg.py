@@ -63,10 +63,10 @@ class Go2ARMFlatEnvCfg(LocomotionVelocityEnvCfg):
         self.rewards.action_rate_l2.weight = -0.01
         
         self.rewards.feet_air_time.weight = 0.0 #0.5
-        self.rewards.F_feet_air_time.weight = 1.5  # Increased from 1.0 to encourage lifting feet
-        self.rewards.R_feet_air_time.weight = 1.5  # Increased from 1.0 to encourage lifting feet
+        self.rewards.F_feet_air_time.weight = 1.0 #0.5
+        self.rewards.R_feet_air_time.weight = 1.0 #0.5
 
-        self.rewards.feet_height.weight = 1.0  # Changed from 0.0 to 1.0 - encourage lifting feet higher during swing
+        self.rewards.feet_height.weight = -0.0 #TODO
         self.rewards.feet_height_body.weight = -3.0 #TODO
         self.rewards.foot_contact.weight = 0.003 #0.003
         self.rewards.hip_deviation.weight = -0.2
@@ -81,8 +81,8 @@ class Go2ARMFlatEnvCfg_PLAY(Go2ARMFlatEnvCfg):
         # post init of parent
         super().__post_init__()
 
-        # make a smaller scene for play - reduce to 1 environment for better visualization
-        self.scene.num_envs = 1  # Changed from 50 to 1 for better performance
+        # make a smaller scene for play
+        self.scene.num_envs = 1
         self.scene.env_spacing = 2.5
         # disable randomization for play
         self.observations.policy.enable_corruption = False
