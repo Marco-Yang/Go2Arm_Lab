@@ -465,6 +465,37 @@ class RewardsCfg:
     height_reward = RewTerm(func=mdp.base_height_l2, weight=-2.0, params={"target_height": 0.3})
 
     flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=-1.0)
+    
+    # ================================================================================================================================
+    # Mobile manipulation specific rewards
+    # ================================================================================================================================
+    
+    # Penalize arm-body self-collision to prevent arm from hitting the robot body
+    arm_self_collision = RewTerm(
+        func=mdp.arm_body_self_collision,
+        weight=-1.0,
+        params={
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=["arm_link.*", "arm_base_link"]),
+            "threshold": 1.0,  # Force threshold in Newtons
+        },
+    )
+    
+    # Encourage base motion diversity - prevent lazy stationary behavior
+    base_motion_diversity = RewTerm(
+        func=mdp.base_motion_diversity,
+        weight=0.5,
+        params={"asset_cfg": SceneEntityCfg("robot")},
+    )
+    
+    # Penalize staying stationary for too long
+    stationary_base_penalty = RewTerm(
+        func=mdp.penalize_stationary_base,
+        weight=-0.3,
+        params={
+            "velocity_threshold": 0.05,
+            "asset_cfg": SceneEntityCfg("robot")
+        },
+    )
    
    
     # thigh_contact = RewTerm(

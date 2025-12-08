@@ -691,3 +691,106 @@ def track_ang_vel_z_world_exp(
     asset = env.scene[asset_cfg.name]
     ang_vel_error = torch.square(env.command_manager.get_command(command_name)[:, 2] - asset.data.root_ang_vel_w[:, 2])
     return torch.exp(-ang_vel_error / std**2)
+
+
+# ================================================================================================================================
+# Custom reward functions for Go2Arm mobile manipulation
+# ================================================================================================================================
+
+def arm_body_self_collision(env: ManagerBasedRLEnv, threshold: float, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
+    """Penalize self-collision between arm links and robot body.
+    
+    This function penalizes contact forces between the manipulator arm and the robot's body
+    when they exceed a specified threshold. This helps prevent the arm from colliding with
+    the quadruped during manipulation tasks.
+    
+    Args:
+        env: The RL environment.
+        threshold: Force threshold above which collision penalty is applied (in Newtons).
+        sensor_cfg: Scene entity configuration specifying which body parts to check.
+                   Should include arm links that might collide with the body.
+    
+    Returns:
+        Penalty value for each environment (higher when collision forces exceed threshold).
+    """
+    # Extract the contact sensor data
+    contact_sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
+    
+    # Get the net contact forces for the specified body parts (arm links)
+    # Shape: [num_envs, history_length, num_bodies, 3]
+    net_contact_forces = contact_sensor.data.net_forces_w_history[:, :, sensor_cfg.body_ids, :]
+    
+    # Compute the magnitude of contact forces
+    # Take the maximum over history to catch brief collisions
+    contact_force_magnitude = torch.norm(net_contact_forces, dim=-1).max(dim=1)[0]  # [num_envs, num_bodies]
+    
+    # Compute violation: how much the force exceeds the threshold
+    violation = contact_force_magnitude - threshold
+    
+    # Sum violations across all monitored body parts and clip to non-negative
+    penalty = torch.sum(violation.clip(min=0.0), dim=1)
+    
+    return penalty
+
+
+def base_motion_diversity(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
+    """Reward robot base for moving and exploring different positions.
+    
+    This function encourages the quadruped to move around rather than staying stationary.
+    It rewards both linear and angular velocity to promote diverse locomotion behaviors.
+    
+    Args:
+        env: The RL environment.
+        asset_cfg: Configuration for the robot asset.
+    
+    Returns:
+        Reward value for each environment (higher when robot is moving).
+    """
+    # Extract the robot asset
+    asset: RigidObject = env.scene[asset_cfg.name]
+    
+    # Reward linear velocity in xy plane (encourage movement)
+    lin_vel_xy = torch.norm(asset.data.root_lin_vel_w[:, :2], dim=1)
+    
+    # Reward angular velocity around z axis (encourage turning)
+    ang_vel_z = torch.abs(asset.data.root_ang_vel_w[:, 2])
+    
+    # Combined reward: encourage both translation and rotation
+    # Use tanh to saturate the reward and prevent excessive speed
+    reward = torch.tanh(lin_vel_xy * 2.0) + 0.3 * torch.tanh(ang_vel_z * 2.0)
+    
+    return reward
+
+
+def penalize_stationary_base(
+    env: ManagerBasedRLEnv, 
+    velocity_threshold: float = 0.05,
+    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+) -> torch.Tensor:
+    """Penalize robot for remaining stationary for extended periods.
+    
+    This function discourages the robot from staying in place by penalizing
+    low velocities. It helps prevent the agent from learning a "lazy" policy
+    that only uses the arm without moving the base.
+    
+    Args:
+        env: The RL environment.
+        velocity_threshold: Velocity below which the robot is considered stationary (m/s).
+        asset_cfg: Configuration for the robot asset.
+    
+    Returns:
+        Penalty value for each environment (higher when robot is stationary).
+    """
+    # Extract the robot asset
+    asset: RigidObject = env.scene[asset_cfg.name]
+    
+    # Compute total velocity magnitude
+    lin_vel_magnitude = torch.norm(asset.data.root_lin_vel_w[:, :2], dim=1)
+    ang_vel_magnitude = torch.abs(asset.data.root_ang_vel_w[:, 2])
+    
+    # Check if robot is stationary (both linear and angular velocity below threshold)
+    is_stationary = (lin_vel_magnitude < velocity_threshold) & (ang_vel_magnitude < velocity_threshold * 0.5)
+    
+    # Return penalty (1.0 when stationary, 0.0 when moving)
+    return is_stationary.float()
+
