@@ -832,9 +832,9 @@
   </joint>
   <link name="link6">
     <inertial>
-      <origin xyz="0.041697 2.4368E-05 0.00014464" rpy="0 0 0" />
-      <mass value="0.44089" />
-      <inertia ixx="0.00038" ixy="0.00000" ixz="0.00000" iyy="0.00028" iyz="0.00000" izz="0.00050" />
+      <origin xyz="0.05435277 -0.00734005 0.01881196" rpy="0 0 0" />
+      <mass value="0.902" />
+      <inertia ixx="0.00229822" ixy="0.000125" ixz="-0.00037442" iyy="0.00596005" iyz="0.00054471" izz="0.00530799" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />

@@ -53,11 +53,10 @@ GO2ARX5_CFG = ArticulationCfg(
             "R[L,R]_thigh_joint": 1.0,
             ".*_calf_joint": -1.5,
             
-            # X5A arm joints (6 revolute + 2 prismatic gripper)
-            # Using ARX5-like initial positions for stability
+            # X5A arm joints - original ARX5 pose
             "joint1": 0.0,      # Base rotation: neutral
-            "joint2": 0.3,      # Shoulder pitch: slight forward lean
-            "joint3": 0.5,      # Elbow pitch: bent configuration
+            "joint2": 0.3,      # Shoulder pitch
+            "joint3": 0.5,      # Elbow pitch
             "joint4": 0.0,      # Wrist joint 1: neutral
             "joint5": 0.0,      # Wrist joint 2: neutral
             "joint6": 0.0,      # Wrist joint 3: neutral

@@ -728,7 +728,8 @@ def arm_body_self_collision(env: ManagerBasedRLEnv, threshold: float, sensor_cfg
     violation = contact_force_magnitude - threshold
     
     # Sum violations across all monitored body parts and clip to non-negative
-    penalty = torch.sum(violation.clip(min=0.0), dim=1)
+    # Add upper limit to prevent extreme values
+    penalty = torch.sum(violation.clip(min=0.0, max=100.0), dim=1)
     
     return penalty
 
