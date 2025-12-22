@@ -15,3 +15,7 @@ from isaaclab_tasks.utils import import_packages
 _BLACKLIST_PKGS = ["utils", ".mdp"]
 # Import all configs in this package
 import_packages(__name__, _BLACKLIST_PKGS)
+
+# Explicitly import config modules to trigger environment registration
+# This ensures Go2+ARX5 environments are registered when Go2Arm_Lab.tasks is imported
+from .manager_based.go2arm_lab import config  # noqa: F401

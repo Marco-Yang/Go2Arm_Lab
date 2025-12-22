@@ -43,13 +43,23 @@ def joint_pos_rel(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg = SceneEntityC
     # extract the used quantities (to enable type-hinting)
     asset: Articulation = env.scene[asset_cfg.name]
 
-    joint_ids, _ = asset.find_joints([ "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
-                        "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
-                        "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
-                        "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                        "arm_joint1", "arm_joint2", "arm_joint3", 
-                        "arm_joint4", "arm_joint5", "arm_joint6"
-                        ],preserve_order=True)
+    # Try to find arm joints with either naming convention (D1 arm: arm_joint1-6, ARX5: joint1-6)
+    leg_joints = ["FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
+                  "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+                  "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
+                  "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint"]
+    
+    # Try D1 arm naming first
+    arm_joints_d1 = ["arm_joint1", "arm_joint2", "arm_joint3", 
+                     "arm_joint4", "arm_joint5", "arm_joint6"]
+    # Try ARX5 naming
+    arm_joints_arx5 = ["joint1", "joint2", "joint3", 
+                       "joint4", "joint5", "joint6"]
+    
+    try:
+        joint_ids, _ = asset.find_joints(leg_joints + arm_joints_d1, preserve_order=True)
+    except:
+        joint_ids, _ = asset.find_joints(leg_joints + arm_joints_arx5, preserve_order=True)
 
     return asset.data.joint_pos[:, joint_ids] - asset.data.default_joint_pos[:, joint_ids]
 
@@ -61,13 +71,24 @@ def joint_vel_rel(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg = SceneEntityC
     """
     # extract the used quantities (to enable type-hinting)
     asset: Articulation = env.scene[asset_cfg.name]
-    joint_ids, _ = asset.find_joints([ "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
-                        "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
-                        "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
-                        "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                        "arm_joint1", "arm_joint2", "arm_joint3", 
-                        "arm_joint4", "arm_joint5", "arm_joint6"
-                        ],preserve_order=True)
+    
+    # Try to find arm joints with either naming convention (D1 arm: arm_joint1-6, ARX5: joint1-6)
+    leg_joints = ["FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
+                  "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+                  "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
+                  "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint"]
+    
+    # Try D1 arm naming first
+    arm_joints_d1 = ["arm_joint1", "arm_joint2", "arm_joint3", 
+                     "arm_joint4", "arm_joint5", "arm_joint6"]
+    # Try ARX5 naming
+    arm_joints_arx5 = ["joint1", "joint2", "joint3", 
+                       "joint4", "joint5", "joint6"]
+    
+    try:
+        joint_ids, _ = asset.find_joints(leg_joints + arm_joints_d1, preserve_order=True)
+    except:
+        joint_ids, _ = asset.find_joints(leg_joints + arm_joints_arx5, preserve_order=True)
 
     return asset.data.joint_vel[:, joint_ids] - asset.data.default_joint_vel[:, joint_ids]
 
@@ -140,15 +161,26 @@ def get_mass_ee(env: ManagerBasedEnv,
     return mass_ee
 
 def get_joints_torques(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
+    """Get applied torques for all robot joints with dual naming support for D1/ARX5 arms."""
     asset: Articulation = env.scene[asset_cfg.name]
-    joint, _ = asset.find_joints([ "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
-                                "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
-                                "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
-                                "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                                "arm_joint1"  , "arm_joint2"    , "arm_joint3"   , 
-                                "arm_joint4"  , "arm_joint5"    , "arm_joint6"
-                                ],preserve_order=True)
-    return asset.data.applied_torque[:, joint]
+    
+    leg_joints = ["FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
+                  "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+                  "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
+                  "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint"]
+    
+    # Try D1 arm naming first (arm_joint1-6), fall back to ARX5 naming (joint1-6)
+    arm_joints_d1 = ["arm_joint1", "arm_joint2", "arm_joint3",
+                     "arm_joint4", "arm_joint5", "arm_joint6"]
+    arm_joints_arx5 = ["joint1", "joint2", "joint3",
+                       "joint4", "joint5", "joint6"]
+    
+    try:
+        joint_ids, _ = asset.find_joints(leg_joints + arm_joints_d1, preserve_order=True)
+    except:
+        joint_ids, _ = asset.find_joints(leg_joints + arm_joints_arx5, preserve_order=True)
+    
+    return asset.data.applied_torque[:, joint_ids]
 
 
 # ================================================================================================================================

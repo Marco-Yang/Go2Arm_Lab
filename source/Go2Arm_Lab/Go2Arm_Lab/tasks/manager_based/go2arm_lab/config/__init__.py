@@ -51,3 +51,47 @@ gym.register(
         "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Go2ArmRoughPPORunnerCfg",
     },
 )
+
+##
+# Register Go2+ARX5 Gym environments.
+##
+
+gym.register(
+    id="Isaac-Go2ARX5-Flat",
+    entry_point="Go2Arm_Lab.env.manager_env:ManagerRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"{__name__}.go2arx5_flat_env_cfg:Go2ARX5FlatEnvCfg",
+        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Go2ArmFlatPPORunnerCfg",
+    },
+)
+
+gym.register(
+    id="Isaac-Go2ARX5-Flat-Play",
+    entry_point="Go2Arm_Lab.env.manager_env:ManagerRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"{__name__}.go2arx5_flat_env_cfg:Go2ARX5FlatEnvCfg_PLAY",
+        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Go2ArmFlatPPORunnerCfg",
+    },
+)
+
+gym.register(
+    id="Isaac-Go2ARX5-Rough",
+    entry_point="Go2Arm_Lab.env.manager_env:ManagerRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"{__name__}.go2arx5_rough_env_cfg:Go2ARX5RoughEnvCfg",
+        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Go2ArmRoughPPORunnerCfg",
+    },
+)
+
+gym.register(
+    id="Isaac-Go2ARX5-Rough-Play",
+    entry_point="Go2Arm_Lab.env.manager_env:ManagerRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"{__name__}.go2arx5_rough_env_cfg:Go2ARX5RoughEnvCfg_PLAY",
+        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Go2ArmRoughPPORunnerCfg",
+    },
+)
